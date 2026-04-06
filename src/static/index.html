@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CustomerSupport AI | Nebula Glass</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* Dashboard specific overrides */
+        #dashboard { display: none; padding: 100px 5% 50px; min-height: 100vh; }
+        .dashboard-layout { display: flex; gap: 30px; }
+        .dashboard-sidebar { width: 350px; display: flex; flex-direction: column; gap: 20px; }
+        .dashboard-main { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        
+        .card-title { font-family: var(--font-heading); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 15px; }
+        
+        select, input, textarea { 
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); 
+            color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-family: var(--font-body);
+        }
+        
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-dim);
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary); color: var(--bg-dark); border-color: var(--primary); }
+        
+        .action-form { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
+        .action-form.active { display: block; opacity: 1; transform: translateY(0); animation: slideUp 0.3s ease forwards; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .metric-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); }
+        .metric-val { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .metric-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        #log-container { max-height: 200px; overflow-y: auto; font-size: 0.85rem; padding-right: 10px; }
+        .log-entry { padding: 8px; border-radius: 6px; margin-bottom: 5px; border-left: 3px solid var(--primary); background: rgba(255,255,255,0.02); }
+        
+        .ticket-view { padding: 25px; }
+        .ticket-subject { font-size: 1.5rem; font-family: var(--font-heading); margin-bottom: 10px; color: var(--primary); }
+        .ticket-body { color: var(--text-dim); line-height: 1.7; }
+
+        /* Conversation Thread */
+        #convo-thread { margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 15px; display: none; }
+        .convo-title { font-family: var(--font-heading); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 12px; }
+        .convo-msg { padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 0.88rem; line-height: 1.6; max-width: 90%; }
+        .convo-msg.bot { background: rgba(123, 97, 255, 0.15); border: 1px solid rgba(123, 97, 255, 0.3); margin-left: auto; border-bottom-right-radius: 4px; }
+        .convo-msg.customer { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
+        .convo-msg.system { background: rgba(255, 187, 0, 0.08); border: 1px solid rgba(255,187,0,0.3); font-style: italic; color: var(--text-dim); font-size: 0.8rem; text-align: center; max-width: 100%; }
+        .convo-sender { font-size: 0.7rem; font-weight: 600; margin-bottom: 4px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
+        .convo-msg.bot .convo-sender { color: #a78bfa; text-align: right; }
+        .convo-msg.customer .convo-sender { color: #94a3b8; }
+        
+        #pipeline-svg { width: 100%; height: auto; margin: 20px 0; }
+        
+        .btn-full { width: 100%; text-align: center; justify-content: center; }
+        
+        /* Reward Dots */
+        #reward-dots { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+        .rdot { width: 12px; height: 12px; border-radius: 50%; opacity: 0.8; }
+        .rdot.high { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .rdot.mid { background: #ffbb00; }
+        .rdot.low { background: #ff4444; }
+
+        /* Baseline Scores */
+        .baseline-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .baseline-label { font-size: 0.78rem; color: var(--text-dim); max-width: 55%; }
+        .baseline-difficulty { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+        .baseline-bar-wrap { flex: 1; margin: 0 10px; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+        .baseline-bar { height: 100%; border-radius: 4px; transition: width 1s ease; }
+        .baseline-bar.easy { background: linear-gradient(90deg, #00ff88, #00cc6a); }
+        .baseline-bar.medium { background: linear-gradient(90deg, #ffbb00, #ff8800); }
+        .baseline-bar.hard { background: linear-gradient(90deg, #ff4488, #cc2266); }
+        .baseline-score { font-size: 0.85rem; font-weight: 700; color: var(--primary); min-width: 50px; text-align: right; }
+        .baseline-avg { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--glass-border); text-align: center; }
+        .baseline-avg .metric-val { font-size: 1.3rem; }
+        .baseline-avg .metric-label { font-size: 0.65rem; }
+    </style>
+</head>
+<body>
+    <div class="cursor-follower"></div>
+    
+    <nav class="glass-nav">
+        <div class="logo">NEBULA<span>UI</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero" onclick="showHome()">Home</a></li>
+            <li><a href="#dashboard" onclick="showDashboard()">Dashboard</a></li>
+            <li class="btn-primary-wrapper"><a href="#dashboard" class="btn-primary" onclick="showDashboard()">Launch Console</a></li>
+        </ul>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main id="landing-page">
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1 class="reveal-text">CustomerSupport <span class="gradient-text">AI Console</span></h1>
+                <p class="reveal-text-delayed">Next-generation agent evaluation environment with high-fidelity glassmorphism dashboard.</p>
+                <div class="hero-btns reveal-btns">
+                    <button class="btn-glass" onclick="showDashboard()">Enter Dashboard</button>
+                    <a href="#features" class="btn-outline">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="glass-sphere"></div>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <h2 class="section-title">System Features</h2>
+            <div class="features-grid">
+                <div class="glass-card reveal">
+                    <div class="card-icon">⚡</div>
+                    <h3>Real-time Step Log</h3>
+                    <p>Track every action and reward with sub-second latency.</p>
+                </div>
+                <div class="glass-card reveal">
+                    <div class="card-icon">🌐</div>
+                    <h3>Multi-Task Support</h3>
+                    <p>From billing disputes to technical outages, we cover it all.</p>
+                </div>
+                <div class="glass-card reveal">
+                    <div class="card-icon">✨</div>
+                    <h3>Interactive Pipeline</h3>
+                    <p>Visualize the agent's progress through a dynamic SVG lifecycle.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section id="dashboard" class="reveal">
+        <div class="dashboard-layout">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="glass-card">
+                    <div class="card-title">Task Configuration</div>
+                    <select id="task-select">
+                        <option value="billing_dispute_v1">💳 Billing Dispute (Easy)</option>
+                        <option value="technical_outage_v1">⚡ Technical Outage (Medium)</option>
+                        <option value="enterprise_complaint_v1">🏢 Enterprise Complaint (Hard)</option>
+                    </select>
+                    <button id="start-btn" class="btn-primary btn-full" onclick="startEpisode()">Start Episode</button>
+                    <button id="reset-btn" class="btn-outline btn-full" style="display:none; margin-top:10px" onclick="resetUI()">Reset Console</button>
+                </div>
+
+                <div class="glass-card" id="metrics-card" style="opacity:0.5">
+                    <div class="card-title">Live Metrics</div>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-val" id="m-score">0.00</div>
+                            <div class="metric-label">Score</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-val" id="m-steps">0/20</div>
+                            <div class="metric-label">Steps</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" id="log-card" style="opacity:0.5">
+                    <div class="card-title">Operation Log</div>
+                    <div id="log-container">
+                        <div class="log-entry">Waiting for session initialization...</div>
+                    </div>
+                    <div id="reward-dots"></div>
+                </div>
+
+                <div class="glass-card" id="baseline-card">
+                    <div class="card-title">🏆 Baseline Scores (Gold Standard)</div>
+                    <div id="baseline-container">
+                        <div style="color: var(--text-dim); font-size: 0.85rem;">Loading baseline...</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <div class="dashboard-main">
+                <div class="glass-card ticket-view" id="ticket-card" style="opacity:0.5">
+                    <div class="card-title">Incoming Ticket</div>
+                    <div id="empty-ticket-msg">Select a task and press Start to begin.</div>
+                    <div id="active-ticket" style="display:none">
+                        <div class="ticket-subject" id="t-subject">Subject Loading...</div>
+                        <div class="ticket-body" id="t-body">Body Loading...</div>
+                        <div id="t-meta" style="margin-top:15px"></div>
+
+                        <!-- Conversation Thread -->
+                        <div id="convo-thread">
+                            <div class="convo-title">💬 Conversation Thread</div>
+                            <div id="convo-messages"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="glass-footer">
+        <p>&copy; 2026 Nebula UI Console. Powered by CustomerSupportEnv.</p>
+    </footer>
+
+    <script src="static/script.js"></script>
+    <script>
+        let _baselineLoaded = false;
+
+        function showDashboard() {
+            document.getElementById('landing-page').style.display = 'none';
+            const dash = document.getElementById('dashboard');
+            dash.style.display = 'block';
+            setTimeout(() => dash.classList.add('active'), 10);
+            window.scrollTo(0,0);
+            if (!_baselineLoaded) loadBaseline();
+        }
+
+        async function loadBaseline() {
+            try {
+                const data = await (await fetch('/baseline')).json();
+                if (data.detail) throw new Error(data.detail);
+                const container = document.getElementById('baseline-container');
+                let html = '';
+                const icons = { easy: '💳', medium: '⚡', hard: '🏢' };
+                data.results.forEach(r => {
+                    const pct = (r.final_score * 100).toFixed(0);
+                    html += `
+                        <div class="baseline-row">
+                            <div class="baseline-label">
+                                ${icons[r.difficulty] || '📋'} ${r.task_id.replace(/_/g, ' ').replace(' v1', '')}
+                                <div class="baseline-difficulty">${r.difficulty} · ${r.total_steps} steps</div>
+                            </div>
+                            <div class="baseline-bar-wrap">
+                                <div class="baseline-bar ${r.difficulty}" style="width: 0%;" data-target="${pct}"></div>
+                            </div>
+                            <div class="baseline-score">${r.final_score.toFixed(4)}</div>
+                        </div>`;
+                });
+                html += `<div class="baseline-avg">
+                    <div class="metric-val" style="color: var(--primary)">${data.average_score.toFixed(4)}</div>
+                    <div class="metric-label" style="color: var(--text-dim)">Average Baseline Score</div>
+                </div>`;
+                container.innerHTML = html;
+                // Animate bars
+                setTimeout(() => {
+                    container.querySelectorAll('.baseline-bar').forEach(bar => {
+                        bar.style.width = bar.dataset.target + '%';
+                    });
+                }, 100);
+                _baselineLoaded = true;
+            } catch (e) {
+                document.getElementById('baseline-container').innerHTML =
+                    '<div style="color:#ff6b6b; font-size:0.8rem;">⚠ No baseline data. Run: python benchmark.py</div>';
+            }
+        }
+
+        function showHome() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('dashboard').classList.remove('active');
+            const landing = document.getElementById('landing-page');
+            landing.style.display = 'block';
+            setTimeout(() => landing.classList.add('active'), 10);
+            window.scrollTo(0,0);
+        }
+        
+
+    </script>
+</body>
+</html>
