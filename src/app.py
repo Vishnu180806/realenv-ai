@@ -65,7 +65,7 @@ _env_store: Dict[str, CustomerSupportEnv] = {}
 # ---------------------------------------------------------------------------
 
 class ResetRequest(BaseModel):
-    task_id: str
+    task_id: Optional[str] = None
 
 
 class ActionRequest(BaseModel):
@@ -131,12 +131,15 @@ def get_spec():
 
 
 @app.post("/reset")
-def reset(req: ResetRequest):
-    if req.task_id not in TASK_REGISTRY:
-        raise HTTPException(400, f"Unknown task_id '{req.task_id}'. Options: {ALL_TASK_IDS}")
+def reset(req: Optional[ResetRequest] = None):
+    # Default to first task if no body or task_id provided
+    task_id = (req.task_id if req and req.task_id else "billing_dispute_v1")
+    
+    if task_id not in TASK_REGISTRY:
+        raise HTTPException(400, f"Unknown task_id '{task_id}'. Options: {ALL_TASK_IDS}")
     
     session_id = str(uuid.uuid4())
-    env = make_env(req.task_id)
+    env = make_env(task_id)
     obs = env.reset()
     _env_store[session_id] = env
     
