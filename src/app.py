@@ -125,7 +125,12 @@ def list_tasks():
 
 @app.get("/spec")
 def get_spec():
-    spec_path = os.path.join(os.path.dirname(__file__), "openenv.yaml")
+    # Look for openenv.yaml in the root (one level up from src)
+    spec_path = os.path.join(os.path.dirname(__file__), "..", "openenv.yaml")
+    # Fallback to local src if root is missing (e.g. during local src development)
+    if not os.path.exists(spec_path):
+        spec_path = os.path.join(os.path.dirname(__file__), "openenv.yaml")
+        
     with open(spec_path) as f:
         return yaml.safe_load(f)
 

@@ -1,0 +1,13 @@
+version: "1.0.0"
+name: "CustomerSupportEnv"
+description: "A simulator for customer support tickets."
+actions:
+  - classify
+  - draft_response
+  - request_info
+  - escalate
+  - resolve
+tasks:
+  - billing_dispute_v1
+  - technical_outage_v1
+  - enterprise_complaint_v1
