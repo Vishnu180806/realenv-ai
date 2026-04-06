@@ -1,3 +1,13 @@
+
+ ---
+title: RealEnv AI
+emoji: 🤖
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
  # CustomerSupportEnv
 
 An OpenEnv-compliant real-world customer support resolution environment built for AI agent evaluation.
