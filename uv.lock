@@ -2369,7 +2369,7 @@ requires-dist = [
     { name = "groq" },
     { name = "jinja2" },
     { name = "numpy" },
-    { name = "openai" },
+    { name = "openai", specifier = ">=2.7.2" },
     { name = "openenv-core", specifier = ">=0.2.0" },
     { name = "pandas" },
     { name = "pydantic" },

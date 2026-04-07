@@ -20,7 +20,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "groq",
-    "openai",
+    "openai>=2.7.2",
     "python-dotenv",
     "pyyaml",
     "pydantic",
