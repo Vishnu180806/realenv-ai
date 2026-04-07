@@ -16,15 +16,29 @@ import time
 from typing import List, Optional, Dict, Any
 from openai import OpenAI
 
-# Add src to sys.path to access project environment
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+# --- Local Path Configuration ---
+# Add server directory to sys.path to access the 'env' and 'tasks' packages
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+SERVER_PATH = os.path.join(PROJECT_ROOT, "server")
 
-from env.environment import make_env
-from env.models import (
-    ActionType, ClassifyAction, DraftResponseAction, EscalateAction,
-    RequestInfoAction, ResolveAction
-)
-from tasks.registry import TASK_REGISTRY
+if SERVER_PATH not in sys.path:
+    sys.path.insert(0, SERVER_PATH)
+
+try:
+    from env.environment import make_env
+    from env.models import (
+        ActionType, ClassifyAction, DraftResponseAction, EscalateAction,
+        RequestInfoAction, ResolveAction
+    )
+    from tasks.registry import TASK_REGISTRY
+except ImportError as e:
+    print(f"[DEBUG] Root path: {PROJECT_ROOT}")
+    print(f"[DEBUG] Server path: {SERVER_PATH}")
+    print(f"[DEBUG] sys.path: {sys.path}")
+    print(f"[DEBUG] Directory content: {os.listdir(PROJECT_ROOT)}")
+    if os.path.exists(SERVER_PATH):
+        print(f"[DEBUG] Server directory content: {os.listdir(SERVER_PATH)}")
+    raise e
 
 # --- Mandatory Environment Variables ---
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.groq.com")

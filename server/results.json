@@ -1,5 +1,6 @@
 {
-  "model": "llama-3.3-70b-versatile",
+  "agent": "gold_standard_baseline",
+  "description": "Deterministic optimal actions \u2014 upper bound baseline",
   "results": [
     {
       "task_id": "billing_dispute_v1",
@@ -9,7 +10,7 @@
         {
           "step": 1,
           "action_type": "classify",
-          "reward": 0.30000000000000004,
+          "reward": 0.3,
           "feedback": "\u2713 Correctly classified as billing. \u2713 Priority okay.",
           "done": false
         },
@@ -59,7 +60,7 @@
         {
           "step": 4,
           "action_type": "escalate",
-          "reward": 0.39999999999999997,
+          "reward": 0.4,
           "feedback": "\u2713 Correctly escalated to Engineering. \u2713 Escalation reason is technically specific. \u2713 Internal notes provided. Ticket escalated. Episode complete.",
           "done": true
         }
@@ -69,46 +70,39 @@
     {
       "task_id": "enterprise_complaint_v1",
       "difficulty": "hard",
-      "final_score": 1.0,
+      "final_score": 0.95,
       "steps": [
         {
           "step": 1,
           "action_type": "classify",
-          "reward": 0.15000000000000002,
+          "reward": 0.15,
           "feedback": "\u2713 Primary category correct (billing). \u2713 Urgent priority correct for enterprise.",
           "done": false
         },
         {
           "step": 2,
           "action_type": "request_info",
-          "reward": 0.1,
-          "feedback": "Info request covers 2/3 issue categories. ~ Missing one sub-issue in clarification questions.",
+          "reward": 0.15,
+          "feedback": "Info request covers 3/3 issue categories. \u2713 All sub-issues addressed in clarification.",
           "done": false
         },
         {
           "step": 3,
-          "action_type": "request_info",
-          "reward": 0.1,
-          "feedback": "Info request covers 2/3 issue categories. ~ Missing one sub-issue in clarification questions.",
-          "done": false
-        },
-        {
-          "step": 4,
           "action_type": "draft_response",
           "reward": 0.25,
           "feedback": "Response mentions 3/3 sub-issues. \u2713 Excellent \u2014 all three issues acknowledged. \u2713 Appropriately detailed response for enterprise.",
           "done": false
         },
         {
-          "step": 5,
+          "step": 4,
           "action_type": "escalate",
           "reward": 0.3,
           "feedback": "\u2713 Correct \u2014 management escalation for enterprise accounts. \u2713 Detailed internal notes with resolution plan. Escalated. Episode complete.",
           "done": true
         }
       ],
-      "total_steps": 5
+      "total_steps": 4
     }
   ],
-  "average_score": 0.9333333333333332
+  "average_score": 0.9167
 }
