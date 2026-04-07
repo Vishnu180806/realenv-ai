@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" == "validate" ]; then
+    python3 /Users/vishnu/Desktop/hackathon/openenv_validate.py
+else
+    echo "Usage: ./openenv validate"
+fi
