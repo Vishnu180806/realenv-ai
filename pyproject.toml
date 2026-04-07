@@ -28,8 +28,15 @@ dependencies = [
     "streamlit",
     "pandas",
     "numpy",
-    "jinja2"
+    "jinja2",
+    "openenv-core>=0.2.0"
 ]
+
+[project.scripts]
+server = "app:main"
+
+[tool.setuptools.package-dir]
+"" = "src"
 
 [project.urls]
 "Homepage" = "https://huggingface.co/spaces/TheVishnu/realenvai"
