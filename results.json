@@ -1,0 +1,45 @@
+{
+  "model": "llama-3.3-70b-versatile",
+  "results": [
+    {
+      "task_id": "billing_dispute_v1",
+      "difficulty": "easy",
+      "final_score": 0.1,
+      "steps": [
+        {
+          "step": 1,
+          "error": "Error code: 404 - {'error': {'message': 'Unknown request URL: POST /openai/v1/openai/v1/chat/completions. Please check the URL for typos, or see the docs at https://console.groq.com/docs/', 'type': 'invalid_request_error', 'code': 'unknown_url'}}",
+          "reward": 0.0
+        }
+      ],
+      "total_steps": 1
+    },
+    {
+      "task_id": "technical_outage_v1",
+      "difficulty": "medium",
+      "final_score": 0.0,
+      "steps": [
+        {
+          "step": 1,
+          "error": "Error code: 404 - {'error': {'message': 'Unknown request URL: POST /openai/v1/openai/v1/chat/completions. Please check the URL for typos, or see the docs at https://console.groq.com/docs/', 'type': 'invalid_request_error', 'code': 'unknown_url'}}",
+          "reward": 0.0
+        }
+      ],
+      "total_steps": 1
+    },
+    {
+      "task_id": "enterprise_complaint_v1",
+      "difficulty": "hard",
+      "final_score": 0.0,
+      "steps": [
+        {
+          "step": 1,
+          "error": "Error code: 404 - {'error': {'message': 'Unknown request URL: POST /openai/v1/openai/v1/chat/completions. Please check the URL for typos, or see the docs at https://console.groq.com/docs/', 'type': 'invalid_request_error', 'code': 'unknown_url'}}",
+          "reward": 0.0
+        }
+      ],
+      "total_steps": 1
+    }
+  ],
+  "average_score": 0.03333333333333333
+}
