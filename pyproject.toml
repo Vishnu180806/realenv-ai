@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "realenv-ai"
+version = "1.0.0"
+description = "Elite Customer Support AI Agent Environment"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Vishnu" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "groq",
+    "openai",
+    "python-dotenv",
+    "pyyaml",
+    "pydantic",
+    "requests",
+    "streamlit",
+    "pandas",
+    "numpy",
+    "jinja2"
+]
+
+[project.urls]
+"Homepage" = "https://huggingface.co/spaces/TheVishnu/realenvai"
+"Bug Tracker" = "https://github.com/Vishnu180806/realenv-ai/issues"
