@@ -127,4 +127,6 @@ class TechnicalOutageGrader(BaseGrader):
         # Full-pipeline bonus
         if state.classification_done and state.escalated:
             score = min(1.0, score + 0.05)
-        return round(min(1.0, max(0.0, score)), 4)
+            
+        # Platform requires score strictly between 0 and 1.
+        return round(min(0.99, max(0.01, score)), 4)

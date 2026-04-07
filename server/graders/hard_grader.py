@@ -163,4 +163,5 @@ class EnterpriseComplaintGrader(BaseGrader):
         if {a.value for a in full_pipeline}.issubset(action_types_used):
             score = min(1.0, score + 0.10)
             
-        return round(min(1.0, max(0.0, score)), 4)
+        # Platform requires score strictly between 0 and 1.
+        return round(min(0.99, max(0.01, score)), 4)

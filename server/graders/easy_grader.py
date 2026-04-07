@@ -37,4 +37,6 @@ class BillingDisputeGrader(BaseGrader):
         return 0.0, "Action noted.", False
 
     def final_score(self, state: EnvironmentState) -> float:
-        return min(1.0, state.cumulative_reward)
+        # Platform requires score strictly between 0 and 1.
+        score = min(1.0, state.cumulative_reward)
+        return round(min(0.99, max(0.01, score)), 4)

@@ -34,7 +34,7 @@
     {
       "task_id": "technical_outage_v1",
       "difficulty": "medium",
-      "final_score": 1.0,
+      "final_score": 0.99,
       "steps": [
         {
           "step": 1,
@@ -104,5 +104,5 @@
       "total_steps": 4
     }
   ],
-  "average_score": 0.9167
+  "average_score": 0.9133
 }

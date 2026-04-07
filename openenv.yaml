@@ -8,6 +8,15 @@ actions:
   - escalate
   - resolve
 tasks:
-  - billing_dispute_v1
-  - technical_outage_v1
-  - enterprise_complaint_v1
+  - id: billing_dispute_v1
+    name: "Easy: Billing Dispute"
+    difficulty: "easy"
+    grader: true
+  - id: technical_outage_v1
+    name: "Medium: Technical Outage"
+    difficulty: "medium"
+    grader: true
+  - id: enterprise_complaint_v1
+    name: "Hard: Enterprise Multi-Issue"
+    difficulty: "hard"
+    grader: true
