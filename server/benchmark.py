@@ -33,7 +33,7 @@ from tasks.registry import ALL_TASK_IDS, TASK_REGISTRY
 # ---------------------------------------------------------------------------
 
 GOLD_ACTIONS = {
-    "billing_dispute_v1": [
+    "task_1": [
         ClassifyAction(
             category=IssueCategory.BILLING,
             priority=Priority.MEDIUM,
@@ -59,7 +59,7 @@ GOLD_ACTIONS = {
         ),
     ],
 
-    "technical_outage_v1": [
+    "task_2": [
         ClassifyAction(
             category=IssueCategory.TECHNICAL,
             priority=Priority.URGENT,
@@ -108,7 +108,7 @@ GOLD_ACTIONS = {
         ),
     ],
 
-    "enterprise_complaint_v1": [
+    "task_3": [
         ClassifyAction(
             category=IssueCategory.BILLING,
             priority=Priority.URGENT,

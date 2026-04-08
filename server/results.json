@@ -3,7 +3,7 @@
   "description": "Deterministic optimal actions \u2014 upper bound baseline",
   "results": [
     {
-      "task_id": "billing_dispute_v1",
+      "task_id": "task_1",
       "difficulty": "easy",
       "final_score": 0.8,
       "steps": [
@@ -32,7 +32,7 @@
       "total_steps": 3
     },
     {
-      "task_id": "technical_outage_v1",
+      "task_id": "task_2",
       "difficulty": "medium",
       "final_score": 0.99,
       "steps": [
@@ -68,7 +68,7 @@
       "total_steps": 4
     },
     {
-      "task_id": "enterprise_complaint_v1",
+      "task_id": "task_3",
       "difficulty": "hard",
       "final_score": 0.95,
       "steps": [

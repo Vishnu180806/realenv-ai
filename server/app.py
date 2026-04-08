@@ -138,7 +138,7 @@ def get_spec():
 @app.post("/reset")
 def reset(req: Optional[ResetRequest] = None):
     # Default to first task if no body or task_id provided
-    task_id = (req.task_id if req and req.task_id else "billing_dispute_v1")
+    task_id = (req.task_id if req and req.task_id else "task_1")
     
     if task_id not in TASK_REGISTRY:
         raise HTTPException(400, f"Unknown task_id '{task_id}'. Options: {ALL_TASK_IDS}")

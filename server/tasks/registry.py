@@ -109,27 +109,50 @@ def _enterprise_complaint_ticket() -> Ticket:
 # ---------------------------------------------------------------------------
 
 TASK_REGISTRY = {
-    "billing_dispute_v1": {
+    # New compliant IDs
+    "task_1": {
         "ticket_factory": _billing_dispute_ticket,
         "grader": BillingDisputeGrader(),
         "difficulty": "easy",
         "description": "Simple billing dispute — classify, respond, resolve.",
         "max_steps": 8,
     },
-    "technical_outage_v1": {
+    "task_2": {
         "ticket_factory": _technical_outage_ticket,
         "grader": TechnicalOutageGrader(),
         "difficulty": "medium",
         "description": "Production API outage — classify, gather info, acknowledge, escalate.",
         "max_steps": 10,
     },
-    "enterprise_complaint_v1": {
+    "task_3": {
         "ticket_factory": _enterprise_complaint_ticket,
         "grader": EnterpriseComplaintGrader(),
         "difficulty": "hard",
         "description": "Enterprise multi-issue complaint — all four pipeline steps required.",
         "max_steps": 12,
     },
+    # Backwards compatibility aliases
+    "billing_dispute_v1": {
+        "ticket_factory": _billing_dispute_ticket,
+        "grader": BillingDisputeGrader(),
+        "difficulty": "easy",
+        "description": "Simple billing dispute",
+        "max_steps": 8,
+    },
+    "technical_outage_v1": {
+        "ticket_factory": _technical_outage_ticket,
+        "grader": TechnicalOutageGrader(),
+        "difficulty": "medium",
+        "description": "Technical outage",
+        "max_steps": 10,
+    },
+    "enterprise_complaint_v1": {
+        "ticket_factory": _enterprise_complaint_ticket,
+        "grader": EnterpriseComplaintGrader(),
+        "difficulty": "hard",
+        "description": "Enterprise complaint",
+        "max_steps": 12,
+    },
 }
 
-ALL_TASK_IDS = list(TASK_REGISTRY.keys())
+ALL_TASK_IDS = ["task_1", "task_2", "task_3"]
