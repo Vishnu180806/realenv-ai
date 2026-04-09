@@ -8,15 +8,22 @@ from .hard_grader import EnterpriseComplaintGrader
 # Global registry for tasks
 _TASK_REGISTRY: List[Dict[str, Any]] = []
 
+
+def _clamp(score: float) -> float:
+    """Ensure score is strictly between 0 and 1 (not exactly 0.0 or 1.0)."""
+    return round(min(0.99, max(0.1, float(score))), 4)
+
+
 def task(func: Callable):
     """Decorator to register a task function."""
     task_info = func(None)  # Call with None to get initial metadata
+    raw_score = task_info.get("score", 0.75)
     _TASK_REGISTRY.append({
         "task_id": func.__name__,
         "name": task_info.get("name", func.__name__.replace("_", " ").title()),
         "description": func.__doc__,
         "grader": task_info.get("grader"),
-        "score": task_info.get("score", 0.95),  # Use score from task_info or default 0.95
+        "score": _clamp(raw_score),  # Always strictly between 0 and 1
     })
     return func
 
@@ -49,7 +56,7 @@ def task_1(env_state: EnvironmentState | None):
         return {
             "name": "Billing Dispute",
             "grader": grade_task_1,
-            "score": 0.92
+            "score": 0.92   # strictly between 0 and 1
         }
     # This part would be used if called during an episode
     return {
@@ -64,7 +71,7 @@ def task_2(env_state: EnvironmentState | None):
         return {
             "name": "Technical Outage",
             "grader": grade_task_2,
-            "score": 0.95
+            "score": 0.75   # strictly between 0 and 1
         }
     return {
         "objective": "Acknowledge and escalate the production outage.",
@@ -78,7 +85,7 @@ def task_3(env_state: EnvironmentState | None):
         return {
             "name": "Enterprise Complaint",
             "grader": grade_task_3,
-            "score": 0.98
+            "score": 0.55   # strictly between 0 and 1
         }
     return {
         "objective": "Handle multi-issue enterprise complaint with SLA priority.",
