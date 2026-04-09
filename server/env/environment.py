@@ -37,6 +37,8 @@ class CustomerSupportEnv:
 
         self.state.step += 1
         reward, feedback, done = self.grader.grade_step(action, self.state)
+        # Universal safety: step reward must be strictly between 0 and 1
+        reward = round(min(0.99, max(0.01, float(reward))), 4)
         
         # Update state flags
         if action.action_type == ActionType.CLASSIFY:

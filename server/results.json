@@ -5,7 +5,7 @@
     {
       "task_id": "task_1",
       "difficulty": "easy",
-      "final_score": 0.8,
+      "final_score": 0.81,
       "steps": [
         {
           "step": 1,
@@ -17,7 +17,7 @@
         {
           "step": 2,
           "action_type": "draft_response",
-          "reward": 0.0,
+          "reward": 0.01,
           "feedback": "Action noted.",
           "done": false
         },
@@ -34,7 +34,7 @@
     {
       "task_id": "task_2",
       "difficulty": "medium",
-      "final_score": 0.99,
+      "final_score": 0.94,
       "steps": [
         {
           "step": 1,
@@ -104,5 +104,5 @@
       "total_steps": 4
     }
   ],
-  "average_score": 0.9133
+  "average_score": 0.9
 }

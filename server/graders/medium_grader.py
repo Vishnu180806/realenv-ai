@@ -1,17 +1,3 @@
-"""
-MEDIUM TASK GRADER — Technical Outage Report
-Difficulty: Medium (target score ~0.55–0.75)
-
-The agent must:
-1. Classify correctly as TECHNICAL / URGENT             (+0.20)
-2. Request clarifying info (reproduction steps, env)    (+0.20)
-3. Draft an acknowledgment response                     (+0.20)
-4. Escalate to Engineering with a clear reason          (+0.40)
-
-Escalation is REQUIRED here — resolving without escalation is penalised.
-Partial credit if steps are done out of order.
-"""
-
 from __future__ import annotations
 from typing import Tuple
 
@@ -29,6 +15,19 @@ INFO_KEYWORDS = {"steps", "reproduce", "version", "browser", "os", "system", "er
 
 
 class TechnicalOutageGrader(BaseGrader):
+    """
+    MEDIUM TASK GRADER — Technical Outage Report
+    Difficulty: Medium (target score ~0.55–0.75)
+
+    The agent must:
+    1. Classify correctly as TECHNICAL / URGENT             (+0.20)
+    2. Request clarifying info (reproduction steps, env)    (+0.20)
+    3. Draft an acknowledgment response                     (+0.20)
+    4. Escalate to Engineering with a clear reason          (+0.40)
+
+    Escalation is REQUIRED here — resolving without escalation is penalised.
+    Partial credit if steps are done out of order.
+    """
 
     def grade_step(
         self, action: AgentAction, state: EnvironmentState
@@ -52,7 +51,7 @@ class TechnicalOutageGrader(BaseGrader):
             else:
                 msgs.append("✗ Outage should be urgent or high priority.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.REQUEST_INFO:
             body_lower = " ".join(action.questions).lower()
@@ -69,7 +68,7 @@ class TechnicalOutageGrader(BaseGrader):
             else:
                 msgs.append("✗ Questions don't target technical debugging info.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.DRAFT_RESPONSE:
             body_lower = action.body.lower()
@@ -86,7 +85,7 @@ class TechnicalOutageGrader(BaseGrader):
             else:
                 msgs.append("✗ Response doesn't acknowledge the outage.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.ESCALATE:
             reward = 0.0
@@ -113,20 +112,27 @@ class TechnicalOutageGrader(BaseGrader):
                 msgs.append("✓ Internal notes provided.")
 
             msgs.append("Ticket escalated. Episode complete.")
-            return reward, " ".join(msgs), True
+            return max(0.01, reward), " ".join(msgs), True
 
         if t == ActionType.RESOLVE:
             # Resolving a production outage without escalation is bad
             msgs = ["✗ A production outage should be escalated, not self-resolved."]
-            return 0.0, " ".join(msgs), True
+            return 0.01, " ".join(msgs), True
 
-        return 0.0, "Unknown action.", False
+        return 0.01, "Unknown action.", False
 
     def final_score(self, state: EnvironmentState) -> float:
+        """
+        Return final episode score strictly between 0 and 1.
+        Platform validation requires: 0 < score < 1 (not 0.0, not 1.0)
+        """
         score = state.cumulative_reward
-        # Full-pipeline bonus
+        
+        # Full-pipeline bonus (but keep score under 0.99)
         if state.classification_done and state.escalated:
-            score = min(1.0, score + 0.05)
-            
-        # Platform requires score strictly between 0 and 1.
-        return round(min(0.99, max(0.01, score)), 4)
+            score = min(0.94, score + 0.05)
+        
+        # Clamp strictly within (0.01, 0.99)
+        score = max(0.01, min(0.99, score))
+        
+        return round(score, 4)

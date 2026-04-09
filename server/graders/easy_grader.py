@@ -26,7 +26,8 @@ class BillingDisputeGrader(BaseGrader):
                 reward += 0.1
                 msgs.append("✓ Priority okay.")
             
-            return reward, " ".join(msgs), False
+            # Score must be strictly > 0
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.RESOLVE:
             action: ResolveAction
@@ -34,7 +35,7 @@ class BillingDisputeGrader(BaseGrader):
                 return 0.5, "✓ Ticket resolved satisfactorily.", True
             return 0.1, "~ Partailly resolved.", True
 
-        return 0.0, "Action noted.", False
+        return 0.01, "Action noted.", False
 
     def final_score(self, state: EnvironmentState) -> float:
         # Platform requires score strictly between 0 and 1.

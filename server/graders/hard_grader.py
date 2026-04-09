@@ -67,7 +67,7 @@ class EnterpriseComplaintGrader(BaseGrader):
             else:
                 msgs.append("✗ Priority too low for enterprise complaint.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.REQUEST_INFO:
             combined = " ".join(action.questions).lower()
@@ -85,7 +85,7 @@ class EnterpriseComplaintGrader(BaseGrader):
             else:
                 msgs.append("✗ Most sub-issues not addressed in info request.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.DRAFT_RESPONSE:
             body = action.body.lower()
@@ -114,7 +114,7 @@ class EnterpriseComplaintGrader(BaseGrader):
                 reward += 0.05
                 msgs.append("✓ Appropriately detailed response for enterprise.")
 
-            return reward, " ".join(msgs), False
+            return max(0.01, reward), " ".join(msgs), False
 
         if t == ActionType.ESCALATE:
             reward = 0.0
@@ -144,13 +144,13 @@ class EnterpriseComplaintGrader(BaseGrader):
                 msgs.append("✗ No meaningful internal notes provided.")
 
             msgs.append("Escalated. Episode complete.")
-            return reward, " ".join(msgs), True
+            return max(0.01, reward), " ".join(msgs), True
 
         if t == ActionType.RESOLVE:
             # Hard task: enterprise multi-issue MUST be escalated
-            return 0.0, "✗ Enterprise multi-issue complaint cannot be self-resolved. Escalation required.", True
+            return 0.01, "✗ Enterprise multi-issue complaint cannot be self-resolved. Escalation required.", True
 
-        return 0.0, "Unknown action.", False
+        return 0.01, "Unknown action.", False
 
     def final_score(self, state: EnvironmentState) -> float:
         score = state.cumulative_reward
