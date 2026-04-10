@@ -128,11 +128,11 @@ class TechnicalOutageGrader(BaseGrader):
         """
         score = state.cumulative_reward
         
-        # Full-pipeline bonus (but keep score under 0.99)
+        # Full-pipeline bonus (but keep score under 0.999)
         if state.classification_done and state.escalated:
             score = min(0.94, score + 0.05)
         
-        # Clamp strictly within (0.01, 0.99)
-        score = max(0.01, min(0.99, score))
+        # Clamp strictly within (0.001, 0.999)
+        score = max(0.001, min(0.999, score))
         
         return round(score, 4)

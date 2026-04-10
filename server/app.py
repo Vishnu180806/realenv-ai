@@ -117,10 +117,25 @@ def list_tasks():
                 "difficulty": TASK_REGISTRY[tid]["difficulty"],
                 "description": TASK_REGISTRY[tid]["description"],
                 "max_steps": TASK_REGISTRY[tid]["max_steps"],
+                "grader": TASK_REGISTRY[tid].get("grader").__class__.__name__ if TASK_REGISTRY[tid].get("grader") else None
             }
             for tid in ALL_TASK_IDS
         ]
     }
+
+@app.get("/graders")
+def list_graders():
+    graders = []
+    for tid in ALL_TASK_IDS:
+        task_info = TASK_REGISTRY[tid]
+        grader = task_info.get("grader")
+        graders.append({
+            "task_id": tid,
+            "difficulty": task_info["difficulty"],
+            "grader_class": grader.__class__.__name__ if grader else None,
+            "score_range": {"min": 0.001, "max": 0.999}
+        })
+    return {"graders": graders}
 
 
 @app.get("/spec")
@@ -199,12 +214,22 @@ def delete_session(session_id: str):
 
 @app.get("/baseline")
 def get_baseline():
-    """Return pre-computed gold-standard baseline benchmark results."""
-    results_path = os.path.join(os.path.dirname(__file__), "results.json")
-    if not os.path.exists(results_path):
-        raise HTTPException(404, "No baseline results found. Run benchmark.py first.")
-    with open(results_path) as f:
-        return json.load(f)
+    """Run gold-standard baseline benchmark for all tasks and return scores."""
+    from benchmark import run_benchmark
+    results = []
+    for tid in ALL_TASK_IDS:
+        r = run_benchmark(tid, verbose=False)
+        results.append({
+            "task_id": r["task_id"],
+            "difficulty": r["difficulty"],
+            "final_score": r["final_score"]
+        })
+    avg = sum(r["final_score"] for r in results) / len(results) if results else 0
+    return {
+        "agent": "gold_standard_baseline",
+        "results": results,
+        "average_score": round(avg, 4)
+    }
 
 
 @app.get("/", response_class=FileResponse)
